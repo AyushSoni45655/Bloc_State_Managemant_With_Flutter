@@ -1,4 +1,8 @@
-part of 'favorite_bloc.dart';
+import 'package:equatable/equatable.dart';
 
-@immutable
-sealed class FavoriteEvent {}
+abstract class FavoriteEvent extends Equatable{
+  @override
+  // TODO: implement props
+  List<Object?> get props => throw UnimplementedError();
+}
+class fetchFavoriteItem extends FavoriteEvent{}
