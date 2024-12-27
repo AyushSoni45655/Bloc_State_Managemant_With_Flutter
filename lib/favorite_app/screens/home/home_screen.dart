@@ -4,6 +4,8 @@ import 'package:bloc_state_manangemant/favorite_app/bloc/favorite_bloc/favorite_
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../modal/favorite_app_modal.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -24,7 +26,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(onPressed: (){}, icon: const Icon(Icons.delete_rounded,color: Colors.green,size: 30,)),
+          BlocBuilder<FavoriteBloc,FavoriteItemState>(
+            builder: (context, state) {
+              return IconButton(onPressed: (){
+                context.read<FavoriteBloc>().add(deleteItem());
+              }, icon: Visibility(
+                visible: state.selectTempList.isNotEmpty,
+                  child: const Icon(Icons.delete_rounded,color: Colors.green,size: 30,)));
+            },
+          ),
           const SizedBox(width: 20,)
         ],
         centerTitle: true,
@@ -58,14 +68,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Card(
                       elevation: 1,
                       child: ListTile(
-                        trailing: IconButton(onPressed: (){}, icon: Icon(Icons.favorite,color: Colors.red,)),
+                        trailing: IconButton(onPressed: (){
+                          final favoriteAppModal itemModal = favoriteAppModal(
+                              id: values.id, value: values.value,
+                            isWishList: values.isWishList ? false : true
+                          );
+                          context.read<FavoriteBloc>().add(wishlistToggleProduct(favoriteItem: itemModal));
+                        }, icon: Icon(
+                          values.isWishList? Icons.favorite:Icons.favorite_border,
+                          color: Colors.red,)
+                        ),
                         leading: Checkbox(
-                          value: isCheck,
+                          value: state.selectTempList.contains(values)? true: false,
                           onChanged: (value) {
-                            isCheck = value!;
-                            setState(() {
+                            if(value!){
+                              context.read<FavoriteBloc>().add(selectEvent(selectedItem: values));
+                            }else{
+                              context.read<FavoriteBloc>().add(unSelectEvent(selectedItem: values));
+                            }
 
-                            });
                           },
                         ),
                         title: Text(values.value,style:  TextStyle(

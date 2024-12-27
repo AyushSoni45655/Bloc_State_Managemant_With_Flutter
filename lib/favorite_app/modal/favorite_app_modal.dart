@@ -4,8 +4,8 @@ class favoriteAppModal extends Equatable {
   final String id;
   final String value;
   final bool deleted;
-  final bool isWishList;
-  const favoriteAppModal({
+   bool isWishList;
+   favoriteAppModal({
     required this.id,
     required this.value,
     this.deleted = false,
